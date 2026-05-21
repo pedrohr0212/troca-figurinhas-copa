@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troca de Figurinhas — Copa 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00754a;
+    --green-dark: #004d2f;
+    --gold: #f4c430;
+    --gold-dark: #c89a1a;
+    --red: #d4213d;
+    --blue: #1a4d8f;
+    --cream: #fdf6e3;
+    --paper: #fefaee;
+    --ink: #1a1a1a;
+    --ink-soft: #3d3d3d;
+    --line: #d8cfb8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: 'Archivo', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.5;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(0,117,74,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(244,196,48,0.08) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--green);
+    background: rgba(0,117,74,0.08);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 8vw, 78px);
+    line-height: 0.9;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  h1 .accent { color: var(--green); }
+  h1 .year {
+    display: inline-block;
+    color: var(--gold-dark);
+    transform: rotate(-3deg);
+    text-shadow: 2px 2px 0 var(--gold);
+  }
+  .subtitle {
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 540px;
+    margin: 0 auto;
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 600px) {
+    .actions { grid-template-columns: 1fr; }
+  }
+  .btn {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    padding: 18px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    text-align: left;
+    position: relative;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .btn.active {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .btn .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--green);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .btn.active .num { color: var(--gold); }
+  .btn .sub {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-top: 6px;
+    display: block;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .panel {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 6px 6px 0 var(--ink);
+    display: none;
+  }
+  .panel.show { display: block; animation: slideIn 0.3s ease; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .panel h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+  }
+  .panel .hint {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  textarea {
+    width: 100%;
+    min-height: 180px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink);
+    resize: vertical;
+    line-height: 1.6;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(0,117,74,0.15);
+  }
+  .submit-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: var(--cream);
+    border: 2px solid var(--green-dark);
+    padding: 12px 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: 'Archivo', sans-serif;
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: all 0.15s;
+  }
+  .btn-primary:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1.5px solid var(--line);
+    padding: 12px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+  }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+  .result {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 6px 6px 0 var(--ink);
+    position: relative;
+    display: none;
+  }
+  .result.show { display: block; }
+  .result::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px;
+    height: 6px;
+    background: linear-gradient(90deg, var(--green) 0%, var(--green) 33%, var(--gold) 33%, var(--gold) 66%, var(--red) 66%, var(--red) 100%);
+    border-radius: 5px 5px 0 0;
+  }
+  .result h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    line-height: 1.1;
+    margin-bottom: 18px;
+    padding-top: 6px;
+  }
+  .country-block {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .country-block:last-of-type { border-bottom: none; }
+  .country-name {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .stickers {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    word-break: break-word;
+  }
+  .multi { color: var(--red); font-weight: 700; }
+  .total {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 4px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .total .num {
+    color: var(--gold);
+    font-size: 28px;
+    margin: 0 6px;
+  }
+  .no-match {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .no-match strong {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--red);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .followup {
+    margin-top: 18px;
+    padding: 18px;
+    background: rgba(244,196,48,0.15);
+    border: 1.5px dashed var(--gold-dark);
+    border-radius: 4px;
+    text-align: center;
+  }
+  .followup p {
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .copy-btn {
+    background: var(--gold);
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Archivo', sans-serif;
+    float: right;
+    margin-top: -4px;
+  }
+  .copy-btn:hover { background: var(--gold-dark); }
+  .copy-btn.copied { background: var(--green); color: var(--cream); border-color: var(--green-dark); }
+
+  footer {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  footer .ball { display: inline-block; animation: spin 4s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <span class="badge">⚽ Álbum de Figurinhas</span>
+    <h1><span class="accent">Troca</span> de Figurinhas<br><span class="year">Copa 2026</span></h1>
+    <p class="subtitle">Cole sua lista, descubra quais figurinhas a gente pode trocar e bora completar esse álbum! 📘</p>
+  </header>
+
+  <div class="actions">
+    <button class="btn" id="btn1" onclick="showPanel(1)">
+      <span class="num">01</span>
+      Figurinhas que VOCÊ precisa
+      <span class="sub">Cole sua lista de faltantes — eu te mostro o que tenho repetido pra trocar</span>
+    </button>
+    <button class="btn" id="btn2" onclick="showPanel(2)">
+      <span class="num">02</span>
+      Figurinhas que o PEDRO precisa
+      <span class="sub">Cole sua lista de repetidas — eu te mostro o que ainda me falta</span>
+    </button>
+  </div>
+
+  <div class="panel" id="panel1">
+    <h2>Cole sua lista de figurinhas faltantes</h2>
+    <p class="hint">Pode colar em qualquer formato: <code>BRA1, BRA2</code> ou <code>BRA 🇧🇷: 1, 2, 3</code> ou uma por linha. O site reconhece sozinho.</p>
+    <textarea id="input1" placeholder="Ex:
+BRA 🇧🇷: 1, 2, 5
+ARG 🇦🇷: 7, 13
+USA7, USA8"></textarea>
+    <div class="submit-row">
+      <button class="btn-primary" onclick="processar(1)">⚽ Verificar troca</button>
+      <button class="btn-ghost" onclick="limpar(1)">Limpar</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel2">
+    <h2>Cole sua lista de figurinhas repetidas</h2>
+    <p class="hint">Pode colar em qualquer formato. Marque repetidas múltiplas com <code>(x2)</code>, <code>(x3)</code>, etc.</p>
+    <textarea id="input2" placeholder="Ex:
+BRA 🇧🇷: 15, 18 (x2)
+FRA 🇫🇷: 3 (x2), 4, 7
+CIV7 (x2)"></textarea>
+    <div class="submit-row">
+      <button class="btn-primary" onclick="processar(2)">⚽ Verificar troca</button>
+      <button class="btn-ghost" onclick="limpar(2)">Limpar</button>
+    </div>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <footer>
+    <span class="ball">⚽</span> Atualizado manualmente após cada troca <span class="ball">⚽</span>
+  </footer>
+</div>
+
+<script>
+// ============================================================
+// BASE DE DADOS — Edite aqui após cada troca
+// Formato: 'CÓDIGO': { flag: '🇧🇷', name: 'País', numeros: [lista] }
+// Para repetidas múltiplas use objeto: { 15: 2, 18: 1 } onde a chave é o número e o valor é a quantidade extra (x2 = 2 cópias = 1 extra... mas aqui vamos guardar a QUANTIDADE de repetidas, ou seja, x2 = guardar 2)
+// ============================================================
+
+// MINHAS REPETIDAS
+// Use número simples para 1 repetida, ou {num: qtdExtra} para múltiplas (x2 = 1 extra, mas vamos representar como a marca x2,x3 etc)
+// Simplificação: vamos usar { numero: multiplicador } onde multiplicador é o "(xN)" que aparece. Sem marca = 1.
+const MINHAS_REPETIDAS = {
+  'FWC_TROFEU':  { flag: '🏆', name: 'FWC Troféu', stickers: { 1: 1 } },
+  'FWC_MUNDO':   { flag: '🌎', name: 'FWC Mundo',  stickers: { 5: 1 } },
+  'FWC_HIST':    { flag: '📜', name: 'FWC História', stickers: { 15: 1, 19: 1 } },
+  'CZE': { flag: '🇨🇿', name: 'República Tcheca', stickers: { 1: 1 } },
+  'BIH': { flag: '🇧🇦', name: 'Bósnia e Herzegovina', stickers: { 4: 1, 18: 1 } },
+  'USA': { flag: '🇺🇸', name: 'Estados Unidos', stickers: { 2: 1, 6: 1, 7: 1, 8: 1, 10: 1, 13: 1, 20: 1 } },
+  'TUR': { flag: '🇹🇷', name: 'Turquia', stickers: { 15: 1, 19: 1 } },
+  'SWE': { flag: '🇸🇪', name: 'Suécia', stickers: { 8: 1, 12: 1, 18: 1 } },
+  'CPV': { flag: '🇨🇻', name: 'Cabo Verde', stickers: { 6: 1, 15: 1, 19: 1 } },
+  'URU': { flag: '🇺🇾', name: 'Uruguai', stickers: { 11: 1, 17: 1 } },
+  'SEN': { flag: '🇸🇳', name: 'Senegal', stickers: { 3: 1 } },
+  'IRQ': { flag: '🇮🇶', name: 'Iraque', stickers: { 13: 1 } },
+  'ARG': { flag: '🇦🇷', name: 'Argentina', stickers: { 13: 1 } },
+  'AUT': { flag: '🇦🇹', name: 'Áustria', stickers: { 11: 1, 12: 1, 19: 1 } },
+  'COD': { flag: '🇨🇩', name: 'Congo RD', stickers: { 7: 1, 13: 1, 16: 1 } },
+  'UZB': { flag: '🇺🇿', name: 'Uzbequistão', stickers: { 14: 1 } },
+  'ENG': { flag: '🏴', name: 'Inglaterra', stickers: { 13: 1 } }
+};
+
+// MINHAS FALTANTES
+const MINHAS_FALTANTES = {
+  'FWC_TROFEU':  { flag: '🏆', name: 'FWC Troféu', stickers: [2, 3, 4] },
+  'FWC_MUNDO':   { flag: '🌎', name: 'FWC Mundo',  stickers: [7, 8] },
+  'FWC_HIST':    { flag: '📜', name: 'FWC História', stickers: [13, 14, 17] },
+  'MEX': { flag: '🇲🇽', name: 'México', stickers: [2, 3, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19] },
+  'RSA': { flag: '🇿🇦', name: 'África do Sul', stickers: [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20] },
+  'KOR': { flag: '🇰🇷', name: 'Coreia do Sul', stickers: [1, 3, 4, 6, 8, 10, 11, 12, 13, 14, 16, 17, 18, 20] },
+  'CZE': { flag: '🇨🇿', name: 'República Tcheca', stickers: [2, 3, 5, 6, 7, 8, 9, 10, 13, 14, 15, 17] },
+  'CAN': { flag: '🇨🇦', name: 'Canadá', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 15, 16, 17, 20] },
+  'BIH': { flag: '🇧🇦', name: 'Bósnia e Herzegovina', stickers: [2, 5, 6, 9, 10, 14, 15, 19] },
+  'QAT': { flag: '🇶🇦', name: 'Catar', stickers: [1, 2, 3, 4, 7, 8, 9, 10, 12, 14, 15, 17, 18, 19, 20] },
+  'SUI': { flag: '🇨🇭', name: 'Suíça', stickers: [1, 2, 4, 5, 6, 10, 11, 14, 16, 18, 20] },
+  'BRA': { flag: '🇧🇷', name: 'Brasil', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16, 17, 18, 19] },
+  'MAR': { flag: '🇲🇦', name: 'Marrocos', stickers: [2, 3, 4, 5, 10, 11, 12, 15, 16, 17, 18, 20] },
+  'HAI': { flag: '🇭🇹', name: 'Haiti', stickers: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19] },
+  'SCO': { flag: '🏴', name: 'Escócia', stickers: [1, 3, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20] },
+  'USA': { flag: '🇺🇸', name: 'Estados Unidos', stickers: [3, 4, 5, 14] },
+  'PAR': { flag: '🇵🇾', name: 'Paraguai', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20] },
+  'AUS': { flag: '🇦🇺', name: 'Austrália', stickers: [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] },
+  'TUR': { flag: '🇹🇷', name: 'Turquia', stickers: [1, 3, 4, 5, 7, 8, 9, 10, 12, 16, 18, 20] },
+  'GER': { flag: '🇩🇪', name: 'Alemanha', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20] },
+  'CUW': { flag: '🇨🇼', name: 'Curaçao', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 19, 20] },
+  'CIV': { flag: '🇨🇮', name: 'Costa do Marfim', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] },
+  'ECU': { flag: '🇪🇨', name: 'Equador', stickers: [1, 2, 4, 5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 18, 19, 20] },
+  'NED': { flag: '🇳🇱', name: 'Holanda', stickers: [1, 3, 4, 8, 12, 13, 14, 16, 17, 18, 19] },
+  'JPN': { flag: '🇯🇵', name: 'Japão', stickers: [1, 2, 4, 5, 6, 7, 9, 10, 12, 14, 15, 17, 20] },
+  'SWE': { flag: '🇸🇪', name: 'Suécia', stickers: [2, 5, 6, 7, 9, 15, 19, 20] },
+  'TUN': { flag: '🇹🇳', name: 'Tunísia', stickers: [1, 5, 10, 13, 16] },
+  'BEL': { flag: '🇧🇪', name: 'Bélgica', stickers: [1, 2, 4, 7, 9, 10, 11, 12, 14, 15, 16, 17, 18, 20] },
+  'EGY': { flag: '🇪🇬', name: 'Egito', stickers: [1, 3, 4, 5, 7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19, 20] },
+  'IRN': { flag: '🇮🇷', name: 'Irã', stickers: [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20] },
+  'NZL': { flag: '🇳🇿', name: 'Nova Zelândia', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16, 17, 18, 19, 20] },
+  'ESP': { flag: '🇪🇸', name: 'Espanha', stickers: [1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 15, 16, 17, 19, 20] },
+  'CPV': { flag: '🇨🇻', name: 'Cabo Verde', stickers: [1, 2, 5, 7, 8, 10, 13, 14, 16, 18, 20] },
+  'KSA': { flag: '🇸🇦', name: 'Arábia Saudita', stickers: [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 17, 18, 19] },
+  'URU': { flag: '🇺🇾', name: 'Uruguai', stickers: [1, 13, 19, 20] },
+  'FRA': { flag: '🇫🇷', name: 'França', stickers: [2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 15, 16, 17, 19, 20] },
+  'SEN': { flag: '🇸🇳', name: 'Senegal', stickers: [2, 4, 5, 8, 9, 10, 12, 14, 15, 17, 19, 20] },
+  'IRQ': { flag: '🇮🇶', name: 'Iraque', stickers: [1, 5, 7, 9, 11, 14, 16, 18, 19, 20] },
+  'NOR': { flag: '🇳🇴', name: 'Noruega', stickers: [1, 2, 3, 4, 6, 7, 8, 11, 14, 15, 17, 19, 20] },
+  'ARG': { flag: '🇦🇷', name: 'Argentina', stickers: [2, 4, 5, 6, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19] },
+  'ALG': { flag: '🇩🇿', name: 'Argélia', stickers: [1, 3, 4, 5, 6, 7, 8, 11, 12, 16, 17, 18, 19, 20] },
+  'AUT': { flag: '🇦🇹', name: 'Áustria', stickers: [2, 3, 4, 5, 6, 7, 8, 10, 13, 14, 16, 18, 20] },
+  'JOR': { flag: '🇯🇴', name: 'Jordânia', stickers: [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] },
+  'POR': { flag: '🇵🇹', name: 'Portugal', stickers: [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 18, 19] },
+  'COD': { flag: '🇨🇩', name: 'Congo RD', stickers: [1, 3, 6, 8, 10, 12, 14, 18] },
+  'UZB': { flag: '🇺🇿', name: 'Uzbequistão', stickers: [2, 3, 6, 7, 10, 13, 15, 16, 17, 20] },
+  'COL': { flag: '🇨🇴', name: 'Colômbia', stickers: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19] },
+  'ENG': { flag: '🏴', name: 'Inglaterra', stickers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 18, 19, 20] },
+  'CRO': { flag: '🇭🇷', name: 'Croácia', stickers: [2, 3, 4, 7, 8, 9, 10, 11, 12, 16, 17, 20] },
+  'GHA': { flag: '🇬🇭', name: 'Gana', stickers: [1, 2, 3, 4, 7, 8, 9, 10, 11, 15, 16, 18, 19, 20] },
+  'PAN': { flag: '🇵🇦', name: 'Panamá', stickers: [1, 4, 8, 9, 12, 14, 15, 16] }
+};
+
+// ============================================================
+// PARSER — Reconhece várias formas de listar figurinhas
+// ============================================================
+function parseLista(texto) {
+  // retorna objeto: { CODIGO: { num: multiplicador, ... } }
+  const result = {};
+  if (!texto || !texto.trim()) return result;
+
+  // Normaliza: remove caracteres invisíveis comuns
+  texto = texto.replace(/[\u200B-\u200D\uFEFF]/g, '');
+
+  // Estratégia 1: linhas tipo "BRA 🇧🇷: 1, 2, 3" ou "BRA: 1, 2, 3"
+  // Estratégia 2: tokens soltos tipo "BRA1, BRA2, USA7 (x2)"
+  // Estratégia 3: por linha com prefixo de país e numeros depois
+
+  // Vamos usar duas passadas:
+  // (A) tentar achar blocos de país com lista de numeros
+  // (B) tentar achar tokens CODIGO+NUMERO soltos
+
+  // ---- PASSADA A: linhas com formato "CODIGO [flag] [:] numeros"
+  const linhas = texto.split(/\r?\n/);
+  let currentCountry = null;
+
+  for (let raw of linhas) {
+    let linha = raw.trim();
+    if (!linha) { currentCountry = null; continue; }
+
+    // tenta extrair codigo de pais no inicio: 3 letras (uppercase) podendo ter flag emoji depois
+    // formatos aceitos: "BRA 🇧🇷: 1, 2", "BRA:", "BRA 🇧🇷", "BRA - 1, 2"
+    const headerMatch = linha.match(/^([A-Za-z]{3})\b[^A-Za-z0-9]*?(?::|—|–|-)?\s*(.*)$/);
+
+    if (headerMatch) {
+      const codigo = headerMatch[1].toUpperCase();
+      const resto = headerMatch[2] || '';
+      // Verifica se o codigo é conhecido em alguma das bases
+      if (codigoConhecido(codigo)) {
+        currentCountry = codigo;
+        if (resto.trim()) {
+          extrairNumeros(resto, currentCountry, result);
+        }
+        continue;
+      }
+    }
+
+    // Tokens soltos na linha: CODIGO+NUMERO (sem espaço)
+    const tokenRegex = /\b([A-Za-z]{3})(\d{1,3})\b(?:\s*\(\s*x\s*(\d+)\s*\))?/gi;
+    let tokenMatch;
+    let achouToken = false;
+    while ((tokenMatch = tokenRegex.exec(linha)) !== null) {
+      const codigo = tokenMatch[1].toUpperCase();
+      const num = parseInt(tokenMatch[2], 10);
+      const mult = tokenMatch[3] ? parseInt(tokenMatch[3], 10) : 1;
+      if (codigoConhecido(codigo)) {
+        if (!result[codigo]) result[codigo] = {};
+        result[codigo][num] = Math.max(result[codigo][num] || 0, mult);
+        achouToken = true;
+      }
+    }
+    if (achouToken) { currentCountry = null; continue; }
+
+    // Se tem pais corrente e a linha só tem numeros: aplica
+    if (currentCountry) {
+      extrairNumeros(linha, currentCountry, result);
+    }
+  }
+
+  return result;
+}
+
+function codigoConhecido(codigo) {
+  // checa em ambas as bases + aliases FWC
+  if (MINHAS_REPETIDAS[codigo] || MINHAS_FALTANTES[codigo]) return true;
+  if (codigo === 'FWC') return true;
+  return false;
+}
+
+function extrairNumeros(texto, codigo, result) {
+  // procura padrões: "1, 2, 3 (x2), 4"
+  const regex = /(\d{1,3})\s*(?:\(\s*x\s*(\d+)\s*\))?/g;
+  let m;
+  if (!result[codigo]) result[codigo] = {};
+  while ((m = regex.exec(texto)) !== null) {
+    const num = parseInt(m[1], 10);
+    const mult = m[2] ? parseInt(m[2], 10) : 1;
+    if (num >= 1 && num <= 999) {
+      result[codigo][num] = Math.max(result[codigo][num] || 0, mult);
+    }
+  }
+}
+
+// ============================================================
+// PROCESSAMENTO
+// ============================================================
+
+// Ordem desejada na saída: primeiro FWC, depois ordem que apareceu na base (mantém ordem de inserção)
+function ordemPaises(base) {
+  return Object.keys(base);
+}
+
+// Caso 1: lista do amigo de FALTANTES vs minhas REPETIDAS
+function cruzarFaltantesDoAmigo(faltantesAmigo) {
+  // faltantesAmigo: { CODIGO: { num: mult } }  (mult não importa aqui, só numero)
+  // resultado: figurinhas que EU tenho repetida e o amigo precisa
+  const resultado = {};
+  let total = 0;
+
+  // Trata FWC: o amigo pode ter colocado FWC com numeros 1..N onde alguns mapeiam pra FWC_TROFEU/MUNDO/HIST?
+  // Para evitar ambiguidade, exigimos que o amigo separe — mas se vier "FWC" tentamos casar nos 3 subgrupos.
+  const minhasRep = MINHAS_REPETIDAS;
+
+  for (const codigo of Object.keys(minhasRep)) {
+    const minhasDoPais = minhasRep[codigo].stickers; // { num: mult }
+    let amigoNums;
+
+    if (codigo.startsWith('FWC_')) {
+      // tenta o codigo exato OU 'FWC' genérico
+      amigoNums = { ...(faltantesAmigo[codigo] || {}), ...(faltantesAmigo['FWC'] || {}) };
+    } else {
+      amigoNums = faltantesAmigo[codigo] || {};
+    }
+
+    const intersec = [];
+    for (const numStr of Object.keys(minhasDoPais)) {
+      const num = parseInt(numStr, 10);
+      if (amigoNums[num] !== undefined) {
+        const mult = minhasDoPais[num];
+        intersec.push({ num, mult });
+        total += mult;
+      }
+    }
+    if (intersec.length > 0) {
+      intersec.sort((a, b) => a.num - b.num);
+      resultado[codigo] = {
+        flag: minhasRep[codigo].flag,
+        name: minhasRep[codigo].name,
+        items: intersec
+      };
+    }
+  }
+  return { resultado, total };
+}
+
+// Caso 2: lista do amigo de REPETIDAS vs minhas FALTANTES
+function cruzarRepetidasDoAmigo(repetidasAmigo) {
+  const resultado = {};
+  let total = 0;
+  const minhasFal = MINHAS_FALTANTES;
+
+  for (const codigo of Object.keys(minhasFal)) {
+    const minhasDoPais = minhasFal[codigo].stickers; // array
+    let amigoNums;
+
+    if (codigo.startsWith('FWC_')) {
+      amigoNums = { ...(repetidasAmigo[codigo] || {}), ...(repetidasAmigo['FWC'] || {}) };
+    } else {
+      amigoNums = repetidasAmigo[codigo] || {};
+    }
+
+    const intersec = [];
+    for (const num of minhasDoPais) {
+      if (amigoNums[num] !== undefined) {
+        const mult = amigoNums[num]; // multiplicador que o amigo declarou
+        intersec.push({ num, mult });
+        total += mult;
+      }
+    }
+    if (intersec.length > 0) {
+      intersec.sort((a, b) => a.num - b.num);
+      resultado[codigo] = {
+        flag: minhasFal[codigo].flag,
+        name: minhasFal[codigo].name,
+        items: intersec
+      };
+    }
+  }
+  return { resultado, total };
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderResultado(titulo, dados, total, frasFinal, otherButtonLabel, otherButtonAction) {
+  const resultEl = document.getElementById('result');
+
+  if (Object.keys(dados).length === 0) {
+    resultEl.innerHTML = `
+      <h3>${escapeHtml(titulo)}</h3>
+      <div class="no-match">
+        <strong>Nenhuma figurinha em comum 😬</strong>
+        Por enquanto não temos figurinhas pra trocar com base nessa lista.
+      </div>
+      <div class="followup">
+        <p>Quer testar a outra lista também?</p>
+        <button class="btn-primary" onclick="${otherButtonAction}">${otherButtonLabel}</button>
+      </div>
+    `;
+    resultEl.classList.add('show');
+    scrollToResult();
+    return;
+  }
+
+  let html = `
+    <button class="copy-btn" id="copyBtn" onclick="copiarResultado()">📋 Copiar</button>
+    <h3>${escapeHtml(titulo)}</h3>
+  `;
+
+  // texto puro para copy
+  let textoCopy = `${titulo}\n\n`;
+
+  for (const codigo of Object.keys(dados)) {
+    const b = dados[codigo];
+    const listaTexto = b.items.map(it => it.mult > 1 ? `${codigo}${it.num} (x${it.mult})` : `${codigo}${it.num}`).join(', ');
+    const listaHtml = b.items.map(it => {
+      if (it.mult > 1) return `<span>${codigo}${it.num} <span class="multi">(x${it.mult})</span></span>`;
+      return `${codigo}${it.num}`;
+    }).join(', ');
+
+    html += `
+      <div class="country-block">
+        <div class="country-name">${b.flag} ${escapeHtml(b.name)}:</div>
+        <div class="stickers">${listaHtml}</div>
+      </div>
+    `;
+    textoCopy += `${b.flag} ${b.name}:\n${listaTexto}\n\n`;
+  }
+
+  html += `
+    <div class="total">${frasFinal} ⚽📘</div>
+    <div class="followup">
+      <p>Quer testar a outra lista também?</p>
+      <button class="btn-primary" onclick="${otherButtonAction}">${otherButtonLabel}</button>
+    </div>
+  `;
+  // versão limpa para copiar (sem tags HTML)
+  textoCopy += `${frasFinal.replace(/<[^>]+>/g, '')} ⚽📘`;
+
+  resultEl.innerHTML = html;
+  resultEl.dataset.copyText = textoCopy;
+  resultEl.classList.add('show');
+  scrollToResult();
+}
+
+function copiarResultado() {
+  const resultEl = document.getElementById('result');
+  const texto = resultEl.dataset.copyText || '';
+  const btn = document.getElementById('copyBtn');
+
+  const sucesso = () => {
+    if (btn) {
+      btn.textContent = '✓ Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copiar';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+  };
+
+  const falha = () => {
+    if (btn) {
+      btn.textContent = '✗ Erro — copie manual';
+      setTimeout(() => { btn.textContent = '📋 Copiar'; }, 3000);
+    }
+  };
+
+  // Tenta API moderna primeiro (precisa HTTPS ou localhost)
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(texto).then(sucesso).catch(() => {
+      // Se falhar, tenta o fallback
+      fallbackCopy(texto) ? sucesso() : falha();
+    });
+  } else {
+    // Fallback para http:// e file://
+    fallbackCopy(texto) ? sucesso() : falha();
+  }
+}
+
+function fallbackCopy(texto) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = texto;
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    ta.style.opacity = '0';
+    ta.setAttribute('readonly', '');
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, texto.length); // para iOS
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function scrollToResult() {
+  setTimeout(() => {
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+// ============================================================
+// CONTROLE DA UI
+// ============================================================
+function showPanel(num) {
+  document.getElementById('panel1').classList.toggle('show', num === 1);
+  document.getElementById('panel2').classList.toggle('show', num === 2);
+  document.getElementById('btn1').classList.toggle('active', num === 1);
+  document.getElementById('btn2').classList.toggle('active', num === 2);
+  // não esconde o resultado, deixa pra comparar
+}
+
+function limpar(num) {
+  document.getElementById('input' + num).value = '';
+}
+
+function processar(num) {
+  const texto = document.getElementById('input' + num).value;
+  if (!texto.trim()) {
+    alert('Cole sua lista antes!');
+    return;
+  }
+  const parsed = parseLista(texto);
+
+  if (num === 1) {
+    // amigo passou FALTANTES dele
+    const { resultado, total } = cruzarFaltantesDoAmigo(parsed);
+    renderResultado(
+      'Figurinhas que eu tenho repetida e você precisa',
+      resultado,
+      total,
+      `Eu tenho <span class="num">${total}</span> figurinha${total !== 1 ? 's' : ''} que falta${total !== 1 ? 'm' : ''} no seu álbum.`,
+      '→ Validar minhas faltantes',
+      'irParaOutroPainel(2)'
+    );
+  } else {
+    // amigo passou REPETIDAS dele
+    const { resultado, total } = cruzarRepetidasDoAmigo(parsed);
+    renderResultado(
+      'Figurinhas que você tem repetida e me faltam',
+      resultado,
+      total,
+      `Eu preciso de <span class="num">${total}</span> figurinha${total !== 1 ? 's' : ''} dessa lista.`,
+      '→ Validar suas faltantes',
+      'irParaOutroPainel(1)'
+    );
+  }
+}
+
+function irParaOutroPainel(num) {
+  showPanel(num);
+  document.getElementById('result').classList.remove('show');
+  setTimeout(() => {
+    document.getElementById('panel' + num).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('input' + num).focus();
+  }, 100);
+}
+
+// Abre o primeiro painel por padrão
+showPanel(1);
+</script>
+</body>
+</html>
